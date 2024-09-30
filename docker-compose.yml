@@ -1,0 +1,81 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:14
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: products_db_user
+      POSTGRES_PASSWORD: MyP455
+      POSTGRES_DB: products_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+      - ./postgres-data:/var/lib/postgresql/data
+    networks:
+      - localnetwork
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U products_db_user -d products_db || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  localstack:
+    image: localstack/localstack
+    container_name: localstack
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=secretsmanager
+      - DEBUG=1
+    networks:
+      - localnetwork
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:4566/_localstack/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  localstack.configurator:
+    image: amazon/aws-cli
+    depends_on:
+      - localstack
+    container_name: localstack.configurator
+    environment:
+      AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID}"
+      AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY}"
+      AWS_REGION: "us-east-1"
+    volumes:
+      - ./scripts/init-localstack.sh:/init-localstack.sh
+    entrypoint: ["/bin/bash", "/init-localstack.sh"]
+    networks:
+      - localnetwork
+
+  product-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID}"
+      AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY}"
+      AWS_REGION: "us-east-1"
+    container_name: product_app
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      localstack:
+        condition: service_healthy
+      localstack.configurator:
+        condition: service_started
+    networks:
+      - localnetwork
+
+volumes:
+  postgres-data:
+
+networks:
+  localnetwork:

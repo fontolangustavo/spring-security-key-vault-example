@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: spring-security-key-vault-example
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  jackson:
+    serialization:
+      indent-output: true
+aws:
+  region: us-east-1
+  secrets:
+    endpoint: http://localstack:4566
+
