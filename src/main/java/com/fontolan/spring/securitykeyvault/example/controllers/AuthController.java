@@ -38,6 +38,21 @@ public class AuthController {
                 new UsernamePasswordAuthenticationToken(body.get("username"), body.get("password")));
         String username = auth.getName();
         var device = deviceService.registerOrUpdate(username, request);
+
+        var user = userService.getByUsername(username);
+        if (user.isTwoFactorEnabled()) {
+            String codeStr = body.get("code");
+            int code;
+            try {
+                code = Integer.parseInt(codeStr);
+            } catch (Exception ex) {
+                return ResponseEntity.status(401).build();
+            }
+            if (!userService.verifyTwoFactorCode(user.getTwoFactorSecret(), code)) {
+                return ResponseEntity.status(401).build();
+            }
+        }
+
         String token = jwtUtil.generateToken(username);
         tokenService.saveToken(token, username, device);
         return ResponseEntity.ok(Map.of("token", token));

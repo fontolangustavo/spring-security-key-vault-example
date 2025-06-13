@@ -24,4 +24,10 @@ public class User {
     private String resetToken;
 
     private LocalDateTime resetTokenExpiry;
+
+    // Secret key used for TOTP based 2FA
+    private String twoFactorSecret;
+
+    // Flag indicating if 2FA is enabled for this user
+    private boolean twoFactorEnabled;
 }
