@@ -2,6 +2,7 @@ package com.fontolan.spring.securitykeyvault.example.auth.tokens;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import com.fontolan.spring.securitykeyvault.example.auth.devices.UserDevice;
 
 @Data
 @Entity
@@ -18,4 +19,8 @@ public class Token {
     private String username;
 
     private boolean revoked;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "device_id")
+    private UserDevice device;
 }
