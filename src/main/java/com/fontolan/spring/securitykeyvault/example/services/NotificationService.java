@@ -19,4 +19,12 @@ public class NotificationService {
         message.setText("Token: " + token);
         mailSender.send(message);
     }
+
+    public void sendSuspiciousLogin(String to, String deviceInfo) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(to);
+        message.setSubject("New device login detected");
+        message.setText("A login from an unrecognized device was detected: " + deviceInfo);
+        mailSender.send(message);
+    }
 }
