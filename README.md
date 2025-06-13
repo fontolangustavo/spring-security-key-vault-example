@@ -64,6 +64,12 @@ http://localhost:8080
 
 Make sure all services are running properly by checking the Docker logs.
 
+## Two-factor Authentication
+
+Users configured with 2FA must provide a TOTP code when performing a login request.
+The code can be generated using any authenticator app (e.g. Google Authenticator)
+with the secret assigned to the user.
+
 ## Stopping the Application
 
 To stop the application and remove the containers, run:

@@ -33,9 +33,24 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> body) {
+        String username = body.get("username");
         Authentication auth = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(body.get("username"), body.get("password")));
-        String username = auth.getName();
+                new UsernamePasswordAuthenticationToken(username, body.get("password")));
+
+        var user = userService.getByUsername(username);
+        if (user.isTwoFactorEnabled()) {
+            String codeStr = body.get("code");
+            int code;
+            try {
+                code = Integer.parseInt(codeStr);
+            } catch (Exception ex) {
+                return ResponseEntity.status(401).build();
+            }
+            if (!userService.verifyTwoFactorCode(user.getTwoFactorSecret(), code)) {
+                return ResponseEntity.status(401).build();
+            }
+        }
+
         String token = jwtUtil.generateToken(username);
         tokenService.saveToken(token, username);
         return ResponseEntity.ok(Map.of("token", token));
