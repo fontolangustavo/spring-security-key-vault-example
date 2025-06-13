@@ -8,6 +8,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.fontolan.spring.securitykeyvault.example.services.NotificationService;
+import com.warrenstrange.googleauth.GoogleAuthenticator;
+import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -21,16 +23,21 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final NotificationService notificationService;
+    private final GoogleAuthenticator googleAuthenticator;
 
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,
-                       NotificationService notificationService) {
+                       NotificationService notificationService, GoogleAuthenticator googleAuthenticator) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.notificationService = notificationService;
+        this.googleAuthenticator = googleAuthenticator;
     }
 
     public User save(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        if (user.isTwoFactorEnabled() && (user.getTwoFactorSecret() == null || user.getTwoFactorSecret().isEmpty())) {
+            user.setTwoFactorSecret(generateTwoFactorSecret());
+        }
         return userRepository.save(user);
     }
 
@@ -91,5 +98,19 @@ public class UserService implements UserDetailsService {
                 .map(String::trim)
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
+    }
+
+    public User getByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    }
+
+    public String generateTwoFactorSecret() {
+        GoogleAuthenticatorKey key = googleAuthenticator.createCredentials();
+        return key.getKey();
+    }
+
+    public boolean verifyTwoFactorCode(String secret, int code) {
+        return googleAuthenticator.authorize(secret, code);
     }
 }
