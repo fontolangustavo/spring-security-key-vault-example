@@ -2,6 +2,7 @@ package com.fontolan.spring.securitykeyvault.example.auth;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import java.time.LocalDateTime;
 
 @Data
 @Entity
@@ -19,4 +20,8 @@ public class User {
 
     // Comma separated roles, e.g. "ROLE_USER,ROLE_ADMIN"
     private String roles;
+
+    private String resetToken;
+
+    private LocalDateTime resetTokenExpiry;
 }

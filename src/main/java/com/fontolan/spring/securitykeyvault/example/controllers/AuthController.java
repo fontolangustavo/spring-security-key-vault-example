@@ -2,6 +2,7 @@ package com.fontolan.spring.securitykeyvault.example.controllers;
 
 import com.fontolan.spring.securitykeyvault.example.auth.jwt.JwtUtil;
 import com.fontolan.spring.securitykeyvault.example.auth.tokens.TokenService;
+import com.fontolan.spring.securitykeyvault.example.auth.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,12 +21,14 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
     private final TokenService tokenService;
+    private final UserService userService;
 
     public AuthController(AuthenticationManager authenticationManager, JwtUtil jwtUtil,
-                          TokenService tokenService) {
+                          TokenService tokenService, UserService userService) {
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
         this.tokenService = tokenService;
+        this.userService = userService;
     }
 
     @PostMapping("/login")
@@ -35,6 +38,26 @@ public class AuthController {
         String username = auth.getName();
         String token = jwtUtil.generateToken(username);
         tokenService.saveToken(token, username);
+        return ResponseEntity.ok(Map.of("token", token));
+    }
+
+    @PostMapping("/reset/request")
+    public ResponseEntity<?> requestReset(@RequestBody Map<String, String> body) {
+        userService.generateResetToken(body.get("username"));
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/reset/confirm")
+    public ResponseEntity<?> confirmReset(@RequestBody Map<String, String> body) {
+        userService.resetPassword(body.get("token"), body.get("password"));
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/login-token")
+    public ResponseEntity<?> loginWithToken(@RequestBody Map<String, String> body) {
+        var user = userService.validateLoginToken(body.get("token"));
+        String token = jwtUtil.generateToken(user.getUsername());
+        tokenService.saveToken(token, user.getUsername());
         return ResponseEntity.ok(Map.of("token", token));
     }
 
