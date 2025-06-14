@@ -4,6 +4,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -14,9 +15,8 @@ public class JwtUtil {
     private final Key key;
     private static final long EXPIRATION_MS = 3600_000; // 1 hour
 
-    public JwtUtil() {
-        // In real apps use a stronger key and load from config
-        byte[] secret = Decoders.BASE64.decode("YXdzZW9tZWhzZWNyZXQxMjM0NQ==");
+    public JwtUtil(@Value("${JWT_SECRET:YXdzZW9tZWhzZWNyZXQxMjM0NQ==}") String secretBase64) {
+        byte[] secret = Decoders.BASE64.decode(secretBase64);
         this.key = Keys.hmacShaKeyFor(secret);
     }
 
