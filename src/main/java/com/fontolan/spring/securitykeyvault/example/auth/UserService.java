@@ -16,7 +16,10 @@ import java.util.UUID;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
+
+import com.fontolan.spring.securitykeyvault.example.auth.Role;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -93,10 +96,9 @@ public class UserService implements UserDetailsService {
                 getAuthorities(user.getRoles()));
     }
 
-    private Collection<? extends GrantedAuthority> getAuthorities(String roles) {
-        return Arrays.stream(roles.split(","))
-                .map(String::trim)
-                .map(SimpleGrantedAuthority::new)
+    private Collection<? extends GrantedAuthority> getAuthorities(java.util.Set<Role> roles) {
+        return roles.stream()
+                .map(role -> new SimpleGrantedAuthority(role.name()))
                 .collect(Collectors.toList());
     }
 
