@@ -1,0 +1,12 @@
+{
+  "realm": "myrealm",
+  "enabled": true,
+  "clients": [
+    {
+      "clientId": "myapp",
+      "secret": "${KEYCLOAK_CLIENT_SECRET}",
+      "redirectUris": ["http://localhost:8080/login/oauth2/code/keycloak"],
+      "publicClient": false
+    }
+  ]
+}
