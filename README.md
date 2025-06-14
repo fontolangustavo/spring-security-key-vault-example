@@ -18,6 +18,11 @@ You need to create a `.env` file at the root of the project with the following A
 AWS_ACCESS_KEY_ID=your_access_key_id
 AWS_SECRET_ACCESS_KEY=your_secret_access_key
 AWS_REGION=us-east-1
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+FACEBOOK_CLIENT_ID=your_facebook_client_id
+FACEBOOK_CLIENT_SECRET=your_facebook_client_secret
+KEYCLOAK_CLIENT_SECRET=your_keycloak_client_secret
 ```
 
 Replace `your_access_key_id` and `your_secret_access_key` with your actual AWS credentials.
@@ -53,6 +58,14 @@ LocalStack is used to emulate AWS services like Secrets Manager. The configurati
 ## Health Check
 
 Health checks are configured for PostgreSQL and LocalStack to ensure the services are fully started before the Spring Boot application begins.
+
+## OAuth2 Login
+
+The application supports OAuth2 login with Google, Facebook and Keycloak. Configure the client secrets in the `.env` file and access the following endpoints to initiate authentication:
+
+- `/oauth2/authorization/google`
+- `/oauth2/authorization/facebook`
+- `/oauth2/authorization/keycloak`
 
 ## Access the Application
 

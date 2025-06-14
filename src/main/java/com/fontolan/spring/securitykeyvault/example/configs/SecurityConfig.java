@@ -2,6 +2,7 @@ package com.fontolan.spring.securitykeyvault.example.configs;
 
 import com.fontolan.spring.securitykeyvault.example.auth.UserService;
 import com.fontolan.spring.securitykeyvault.example.auth.jwt.JwtAuthenticationFilter;
+import com.fontolan.spring.securitykeyvault.example.auth.oauth2.CustomOAuth2UserService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -23,10 +24,13 @@ public class SecurityConfig {
 
     private final UserService userService;
     private final JwtAuthenticationFilter jwtFilter;
+    private final CustomOAuth2UserService oAuth2UserService;
 
-    public SecurityConfig(UserService userService, JwtAuthenticationFilter jwtFilter) {
+    public SecurityConfig(UserService userService, JwtAuthenticationFilter jwtFilter,
+                          CustomOAuth2UserService oAuth2UserService) {
         this.userService = userService;
         this.jwtFilter = jwtFilter;
+        this.oAuth2UserService = oAuth2UserService;
     }
 
     @Bean
@@ -50,7 +54,10 @@ public class SecurityConfig {
             .userDetailsService(userService)
             .addFilterBefore(jwtFilter, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class)
             .formLogin(AbstractHttpConfigurer::disable)
-            .httpBasic(AbstractHttpConfigurer::disable);
+            .httpBasic(AbstractHttpConfigurer::disable)
+            .oauth2Login(oauth -> oauth
+                .userInfoEndpoint(info -> info.userService(oAuth2UserService))
+            );
         return http.build();
     }
 }

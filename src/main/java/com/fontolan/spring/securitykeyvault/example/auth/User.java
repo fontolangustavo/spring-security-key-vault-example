@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 import com.fontolan.spring.securitykeyvault.example.auth.Role;
+import com.fontolan.spring.securitykeyvault.example.auth.AuthProvider;
 
 @Data
 @Entity
@@ -35,4 +36,9 @@ public class User {
 
     // Flag indicating if 2FA is enabled for this user
     private boolean twoFactorEnabled;
+
+    @Enumerated(EnumType.STRING)
+    private AuthProvider provider = AuthProvider.LOCAL;
+
+    private String providerId;
 }
