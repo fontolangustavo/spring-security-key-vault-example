@@ -1,8 +1,8 @@
 package com.fontolan.spring.securitykeyvault.example;
 
-import com.fontolan.spring.securitykeyvault.example.auth.User;
-import com.fontolan.spring.securitykeyvault.example.auth.UserService;
-import com.fontolan.spring.securitykeyvault.example.auth.Role;
+import com.fontolan.spring.securitykeyvault.example.domain.model.User;
+import com.fontolan.spring.securitykeyvault.example.application.service.UserService;
+import com.fontolan.spring.securitykeyvault.example.domain.model.Role;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
