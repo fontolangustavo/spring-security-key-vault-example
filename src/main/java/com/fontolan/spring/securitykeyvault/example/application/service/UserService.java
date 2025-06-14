@@ -11,8 +11,7 @@ import com.fontolan.spring.securitykeyvault.example.application.service.Notifica
 import com.fontolan.spring.securitykeyvault.example.domain.repository.UserRepository;
 import com.fontolan.spring.securitykeyvault.example.domain.model.User;
 import com.fontolan.spring.securitykeyvault.example.domain.model.Role;
-import com.warrenstrange.googleauth.GoogleAuthenticator;
-import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
+import com.fontolan.spring.securitykeyvault.example.application.service.TwoFactorAuthService;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -28,14 +27,14 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final NotificationService notificationService;
-    private final GoogleAuthenticator googleAuthenticator;
+    private final TwoFactorAuthService twoFactorAuthService;
 
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,
-                       NotificationService notificationService, GoogleAuthenticator googleAuthenticator) {
+                       NotificationService notificationService, TwoFactorAuthService twoFactorAuthService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.notificationService = notificationService;
-        this.googleAuthenticator = googleAuthenticator;
+        this.twoFactorAuthService = twoFactorAuthService;
     }
 
     public User save(User user) {
@@ -110,12 +109,11 @@ public class UserService implements UserDetailsService {
     }
 
     public String generateTwoFactorSecret() {
-        GoogleAuthenticatorKey key = googleAuthenticator.createCredentials();
-        return key.getKey();
+        return twoFactorAuthService.generateSecret();
     }
 
     public boolean verifyTwoFactorCode(String secret, int code) {
-        return googleAuthenticator.authorize(secret, code);
+        return twoFactorAuthService.verifyCode(secret, code);
     }
 }
 

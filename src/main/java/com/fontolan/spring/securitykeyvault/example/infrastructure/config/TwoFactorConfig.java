@@ -1,14 +1,14 @@
 package com.fontolan.spring.securitykeyvault.example.infrastructure.config;
 
-import com.warrenstrange.googleauth.GoogleAuthenticator;
+import com.fontolan.spring.securitykeyvault.example.application.service.TwoFactorAuthService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class TwoFactorConfig {
     @Bean
-    public GoogleAuthenticator googleAuthenticator() {
-        return new GoogleAuthenticator();
+    public TwoFactorAuthService twoFactorAuthService() {
+        return new TwoFactorAuthService();
     }
 }
 
