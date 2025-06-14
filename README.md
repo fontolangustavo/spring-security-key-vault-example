@@ -23,9 +23,10 @@ GOOGLE_CLIENT_SECRET=your_google_client_secret
 FACEBOOK_CLIENT_ID=your_facebook_client_id
 FACEBOOK_CLIENT_SECRET=your_facebook_client_secret
 KEYCLOAK_CLIENT_SECRET=your_keycloak_client_secret
+JWT_SECRET=base64_encoded_secret
 ```
-
 Replace `your_access_key_id` and `your_secret_access_key` with your actual AWS credentials.
+`JWT_SECRET` must be a Base64 encoded string used to sign JWT tokens.
 
 ## How to Run the Project
 
@@ -76,6 +77,51 @@ http://localhost:8080
 ```
 
 Make sure all services are running properly by checking the Docker logs.
+
+### Running with Authentication
+
+The application starts with a default `admin` user (password `admin`).
+Ensure the `JWT_SECRET` and OAuth2 variables are configured in the `.env` file
+before starting:
+
+```bash
+docker-compose up
+```
+
+Once running you can register new users and authenticate using the following
+REST endpoints.
+
+### Authentication Endpoints
+
+- **Register** a new user
+
+  ```bash
+  curl -X POST http://localhost:8080/api/auth/register \
+    -H "Content-Type: application/json" \
+    -d '{"username":"user1","password":"mypassword"}'
+  ```
+
+- **Login** and receive a JWT
+
+  ```bash
+  curl -X POST http://localhost:8080/api/auth/login \
+    -H "Content-Type: application/json" \
+    -d '{"username":"user1","password":"mypassword"}'
+  ```
+
+- **Refresh** an existing token
+
+  ```bash
+  curl -X POST http://localhost:8080/api/auth/refresh \
+    -H "Authorization: Bearer <old_token>"
+  ```
+
+- **Logout** (revokes the token)
+
+  ```bash
+  curl -X POST http://localhost:8080/api/auth/logout \
+    -H "Authorization: Bearer <token>"
+  ```
 
 ## Two-factor Authentication
 

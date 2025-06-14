@@ -33,6 +33,16 @@ public class AuthController {
         this.deviceService = deviceService;
     }
 
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestBody Map<String, String> body) {
+        var user = new com.fontolan.spring.securitykeyvault.example.auth.User();
+        user.setUsername(body.get("username"));
+        user.setPassword(body.get("password"));
+        user.setRoles(java.util.Set.of(com.fontolan.spring.securitykeyvault.example.auth.Role.ROLE_USER));
+        userService.save(user);
+        return ResponseEntity.ok().build();
+    }
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> body, HttpServletRequest request) {
         Authentication auth = authenticationManager.authenticate(
