@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -104,11 +105,13 @@ public class AuthController {
     }
 
     @GetMapping("/devices")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public ResponseEntity<?> listDevices(Authentication authentication) {
         return ResponseEntity.ok(tokenService.activeTokens(authentication.getName()));
     }
 
     @PostMapping("/devices/{id}/revoke")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public ResponseEntity<?> revokeDevice(@PathVariable Long id) {
         tokenService.revokeTokenById(id);
         return ResponseEntity.ok().build();

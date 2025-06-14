@@ -2,6 +2,7 @@ package com.fontolan.spring.securitykeyvault.example;
 
 import com.fontolan.spring.securitykeyvault.example.auth.User;
 import com.fontolan.spring.securitykeyvault.example.auth.UserService;
+import com.fontolan.spring.securitykeyvault.example.auth.Role;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -21,7 +22,7 @@ public class SpringSecurityKeyVaultExampleApplication {
                                 User user = new User();
                                 user.setUsername("admin");
                                 user.setPassword("admin");
-                                user.setRoles("ROLE_USER,ROLE_ADMIN");
+                                user.setRoles(java.util.Set.of(Role.ROLE_USER, Role.ROLE_ADMIN));
                                 userService.save(user);
                         }
                 };

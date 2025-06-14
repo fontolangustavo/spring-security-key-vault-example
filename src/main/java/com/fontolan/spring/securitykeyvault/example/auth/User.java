@@ -3,6 +3,9 @@ package com.fontolan.spring.securitykeyvault.example.auth;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
+import java.util.Set;
+
+import com.fontolan.spring.securitykeyvault.example.auth.Role;
 
 @Data
 @Entity
@@ -18,8 +21,10 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    // Comma separated roles, e.g. "ROLE_USER,ROLE_ADMIN"
-    private String roles;
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
+    @Enumerated(EnumType.STRING)
+    private Set<Role> roles;
 
     private String resetToken;
 

@@ -37,4 +37,12 @@ public class UserDeviceService {
     public java.util.List<UserDevice> listDevices(String username) {
         return repository.findByUsername(username);
     }
+
+    public boolean isTrustedDevice(String username, HttpServletRequest request) {
+        String agent = request.getHeader("User-Agent");
+        String ip = request.getRemoteAddr();
+        return repository.findByUsernameAndUserAgentAndIp(username, agent, ip)
+                .map(UserDevice::isTrusted)
+                .orElse(false);
+    }
 }
