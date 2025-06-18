@@ -23,7 +23,7 @@ public class ProductController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('USER','ADMIN') and @userDeviceService.isTrustedDevice(authentication.name, #request)")
-    public Page<Product> listarProdutos(
+    public Page<Product> getAll(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             HttpServletRequest request) {

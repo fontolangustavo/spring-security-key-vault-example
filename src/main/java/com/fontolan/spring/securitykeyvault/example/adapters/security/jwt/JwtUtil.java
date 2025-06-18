@@ -15,7 +15,7 @@ public class JwtUtil {
     private final Key key;
     private static final long EXPIRATION_MS = 3600_000; // 1 hour
 
-    public JwtUtil(@Value("${JWT_SECRET:YXdzZW9tZWhzZWNyZXQxMjM0NQ==}") String secretBase64) {
+    public JwtUtil(@Value("${JWT_SECRET:eJTkszxyBZtYaehPvTL/bP13pgQR1GCYoppvyRrLXgI=}") String secretBase64) {
         byte[] secret = Decoders.BASE64.decode(secretBase64);
         this.key = Keys.hmacShaKeyFor(secret);
     }
@@ -32,14 +32,14 @@ public class JwtUtil {
     }
 
     public String getUsername(String token) {
-        return Jwts.parserBuilder().setSigningKey(key).build()
+        return Jwts.parser().setSigningKey(key).build()
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
     }
 
     public boolean isExpired(String token) {
-        Date expiration = Jwts.parserBuilder().setSigningKey(key).build()
+        Date expiration = Jwts.parser().setSigningKey(key).build()
                 .parseClaimsJws(token)
                 .getBody()
                 .getExpiration();

@@ -20,9 +20,9 @@ public class DatabaseConfig {
     public DataSource dataSource() {
         return DataSourceBuilder.create()
                 .driverClassName("org.postgresql.Driver")
-                .url("jdbc:postgresql://postgres:5432/products_db")
-                .username("products_db_user")
-                .password(secretsManagerService.getSecretValue("db-password"))
+                .url("jdbc:postgresql://localhost:5432/products_db")
+                .username("postgres")
+                .password("postgres")
                 .build();
     }
 }
